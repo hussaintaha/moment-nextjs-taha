@@ -5,8 +5,11 @@ import { useRouter } from 'next/navigation'
 import Image from 'next/image';
 
 import { Button } from '@/components/ui/button';
+
 import { Card, CardContent, CardFooter } from '@/components/ui/card';
+
 import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group';
+
 import {
   Select,
   SelectContent,
@@ -16,7 +19,9 @@ import {
 } from '@/components/ui/select';
 
 import { useCartContext } from '../layout';
+
 import { ApplePayButton } from '@/components/ApplePayButton';
+
 import { Products } from '@/lib/bin/ProductsData';
 
 const PurchaseSection = () => {

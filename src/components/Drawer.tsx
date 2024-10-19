@@ -2,14 +2,19 @@
 import React, { useEffect, useState } from 'react';
 
 import { LayoutGrid } from 'lucide-react';
+
 import Image from 'next/image';
+
 import Link from 'next/link';
 
 import { ApplePayButton } from './ApplePayButton';
 
 import { Button } from '@/components/ui/button';
+
 import { Card, CardContent, CardFooter } from '@/components/ui/card';
+
 import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group';
+
 import {
   Select,
   SelectContent,
@@ -19,7 +24,9 @@ import {
 } from '@/components/ui/select';
 
 import ReviewsSection from '../app/Homepage/ReviewsSection';
+
 import { useCartContext } from '@/app/layout';
+
 import { Product, DrawerProps } from '@/lib/interfaces';
 
 const Drawer: React.FC<DrawerProps> = ({ product, allProducts, onClose, from, closeDrawer }) => {

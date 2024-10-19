@@ -1,10 +1,14 @@
 'use client';
 import React, { useContext, useEffect, useRef, useState } from 'react';
+
 import { Inter } from "next/font/google";
+
 import "./globals.css";
 
 import { cartContext } from "./../context/context"
+
 import { Products } from "@/lib/bin/ProductsData";
+
 import { CartItem } from "@/lib/interfaces";
 
 const inter = Inter({ subsets: ["latin"] });

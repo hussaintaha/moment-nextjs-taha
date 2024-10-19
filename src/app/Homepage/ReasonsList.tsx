@@ -3,6 +3,7 @@ import { FC } from 'react';
 import Image from 'next/image';
 
 import CustomButtonGray from '@/components/buttonGray';
+
 import { ReasonsProps } from '@/lib/interfaces';
 
 

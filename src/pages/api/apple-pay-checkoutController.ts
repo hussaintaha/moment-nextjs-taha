@@ -1,6 +1,7 @@
 import type { NextApiRequest, NextApiResponse } from 'next';
 
 import { DataType } from '@shopify/shopify-api';
+
 import { Shopify, session } from '@/utils/Shopify';
 
 

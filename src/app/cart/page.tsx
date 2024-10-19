@@ -3,15 +3,21 @@
 import React, { useState, useEffect } from 'react';
 
 import { Minus, Plus, Trash2, LayoutGrid, Truck } from 'lucide-react';
+
 import Image from 'next/image';
+
 import Link from 'next/link';
 
 import { Button } from '@/components/ui/button';
 
 import { Products } from '../../lib/bin/ProductsData';
+
 import { useCartContext } from '../layout';
+
 import { Product } from '@/lib/interfaces';
+
 import './cart.css'
+
 import Drawer from '@/components/Drawer';
 
 

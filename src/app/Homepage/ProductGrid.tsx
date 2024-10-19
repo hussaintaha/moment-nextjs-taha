@@ -6,6 +6,7 @@ import Image from 'next/image';
 import Drawer from '@/components/Drawer';
 
 import { Products } from '@/lib/bin/ProductsData';
+
 import { Product } from '@/lib/interfaces';
 
 

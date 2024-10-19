@@ -1,8 +1,11 @@
 import type { NextApiRequest, NextApiResponse } from 'next';
 
 import { DataType } from '@shopify/shopify-api';
+
 import { Shopify, session } from '@/utils/Shopify';
+
 import { sendShopifyStorefrontRequest } from '@/app/functions/sendShopifyStorefrontRequest';
+
 import { Product } from '@/lib/interfaces';
 
 interface sellingPlans {
