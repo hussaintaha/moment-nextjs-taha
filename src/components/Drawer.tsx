@@ -25,7 +25,7 @@ import {
 
 import ReviewsSection from '../app/Homepage/ReviewsSection';
 
-import { useCartContext } from '@/app/layout';
+import { useCartContext } from '@/context/useCartContext';
 
 import { Product, DrawerProps } from '@/lib/interfaces';
 
@@ -45,7 +45,7 @@ const Drawer: React.FC<DrawerProps> = ({ product, allProducts, onClose, from, cl
   useEffect(() => {
     isNoFrequency && setNoFrequency(false)
     selectedPurchaseOption === "onetime" && setSelectedSubscription('')
-  }, [selectedSubscription, selectedPurchaseOption])
+  }, [selectedSubscription, selectedPurchaseOption, isNoFrequency])
 
   const handleAddToBag = () => {
     const randomID = window.crypto.randomUUID()

@@ -1,7 +1,6 @@
 import React from 'react';
 
 import { Reviews } from '@/lib/bin/ReviewsData';
-
 import { ReviewsSectionProps } from '@/lib/interfaces';
 
 const ReviewsSection: React.FC<ReviewsSectionProps> = ({ productName }) => {

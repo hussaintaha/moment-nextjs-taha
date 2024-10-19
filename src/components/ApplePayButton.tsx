@@ -1,4 +1,6 @@
+'use client'
 import { buttonVariants } from "@/components/ui/button";
+import { PaymentRequest } from "@/lib/interfaces";
 
 import { cn, hasApplePay } from "@/lib/utils";
 
@@ -12,6 +14,8 @@ const Icons = {
     </svg>
   ),
 }
+
+
 
 
 // async function onApplePayButtonClicked1() {
@@ -100,72 +104,75 @@ const Icons = {
 
 const onApplePayButtonClicked = async () => {
   try {
-    if (window.ApplePaySession && ApplePaySession.canMakePayments()) {
-      console.log("trigger onApplePayButtonClicked function");
-      const paymentRequest = {
-        countryCode: 'US',
-        currencyCode: 'USD',
-        total: {
-          label: 'metammerce',
-          amount: '10.00', // Total amount to charge
-        },
-        supportedNetworks: ['visa', 'masterCard', 'amex'],
-        merchantCapabilities: ['supports3DS'],
-      };
-
-      const session = new ApplePaySession(1, paymentRequest);
-      console.log("session==================>", session);
-
-      session.onvalidatemerchant = async (event: any) => {
-
-        console.log("onvalidatemerchant event------------>", event);
-
-        const merchantSession = await fetch('/api/validate-merchant', {
-          method: 'POST',
-          body: JSON.stringify({ validationURL: event.validationURL }),
-          headers: {
-            'Content-Type': 'application/json',
-          },
-        });
-
-        const sessionData = await merchantSession.json();
-        console.log("sessionData ==============", sessionData);
-        session.completeMerchantValidation(sessionData);
-      };
-
-      session.onpaymentauthorized = async (event: any) => {
-        console.log("onpaymentauthorized event------------>", event);
-        const paymentData = event.payment;
-
-        const paymentDetails = {
-          amount: parseFloat(paymentData.transaction.amount),
-          currency: paymentData.transaction.currency || 'USD',
-          token: paymentData.token,
-        };
-
-        const response = await fetch('/api/process-payment', {
-          method: 'POST',
-          body: JSON.stringify(paymentDetails),
-          headers: {
-            'Content-Type': 'application/json',
-          },
-        });
-
-        const paymentResponse = await response.json();
-        console.log("paymentResponse ============", paymentResponse);
-
-        session.completePayment(paymentResponse.status);
-      };
-
-      session.oncancel = (event: any) => {
-        console.log("oncancel event------------>", event);
-        // Payment canceled by WebKit
-      };
-
-      session.begin();
-    } else {
-      console.error('Apple Pay is not available.');
+    if (!ApplePaySession) {
+      return;
     }
+    // if (window.ApplePaySession && window.ApplePaySession.canMakePayments()) {
+    console.log("trigger onApplePayButtonClicked function");
+    const paymentRequest: PaymentRequest = {
+      countryCode: 'US',
+      currencyCode: 'USD',
+      total: {
+        label: 'metammerce',
+        amount: '10.00', // Total amount to charge
+      },
+      supportedNetworks: ['visa', 'masterCard', 'amex'],
+      merchantCapabilities: ['supports3DS'],
+    };
+
+    const session = new ApplePaySession(1, paymentRequest);
+    console.log("session==================>", session);
+
+    session.onvalidatemerchant = async (event: any) => {
+
+      console.log("onvalidatemerchant event------------>", event);
+
+      const merchantSession = await fetch('/api/validate-merchant', {
+        method: 'POST',
+        body: JSON.stringify({ validationURL: event.validationURL }),
+        headers: {
+          'Content-Type': 'application/json',
+        },
+      });
+
+      const sessionData = await merchantSession.json();
+      console.log("sessionData ==============", sessionData);
+      session.completeMerchantValidation(sessionData);
+    };
+
+    session.onpaymentauthorized = async (event: any) => {
+      console.log("onpaymentauthorized event------------>", event);
+      const paymentData = event.payment;
+
+      const paymentDetails = {
+        amount: parseFloat(paymentData.transaction.amount),
+        currency: paymentData.transaction.currency || 'USD',
+        token: paymentData.token,
+      };
+
+      const response = await fetch('/api/process-payment', {
+        method: 'POST',
+        body: JSON.stringify(paymentDetails),
+        headers: {
+          'Content-Type': 'application/json',
+        },
+      });
+
+      const paymentResponse = await response.json();
+      console.log("paymentResponse ============", paymentResponse);
+
+      session.completePayment(paymentResponse.status);
+    };
+
+    session.oncancel = (event: any) => {
+      console.log("oncancel event------------>", event);
+      // Payment canceled by WebKit
+    };
+
+    session.begin();
+    // } else {
+    //   console.error('Apple Pay is not available.');
+    // }
   } catch (error) {
     console.log("error occured on onApplePayButtonClicked ", error);
 

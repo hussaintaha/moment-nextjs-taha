@@ -2,13 +2,16 @@ import { NextApiRequest, NextApiResponse } from 'next';
 
 import Stripe from 'stripe';
 
-console.log("process.env.STRIPE_SECRET_KEY--------", process.env.STRIPE_SECRET_KEY);
+console.log("process.env.STRIPE_SECRET_KEY--------", process.env.STRIPE_SECRET_KEY, {
+    typescript: true,
+    apiVersion: '2024-09-02'
+});
 
 const stripe = new Stripe(process.env.STRIPE_SECRET_KEY || "");
 
 console.log("stripe   ", stripe);
 
-export default async function handler(req: NextApiRequest, res: NextApiResponse) {
+export default async function handler(req, res) {
     if (req.method === 'POST') {
         const paymentData = req.body;
 

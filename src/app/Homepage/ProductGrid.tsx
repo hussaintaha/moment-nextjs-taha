@@ -4,9 +4,7 @@ import React, { useState, KeyboardEvent } from 'react';
 import Image from 'next/image';
 
 import Drawer from '@/components/Drawer';
-
 import { Products } from '@/lib/bin/ProductsData';
-
 import { Product } from '@/lib/interfaces';
 
 
@@ -64,6 +62,8 @@ const ProductGrid: React.FC = () => {
           product={selectedProduct}
           allProducts={Products}
           onClose={closeDrawer}
+          from={"purchase"}
+          closeDrawer={() => { }}
         />
       )}
     </div>

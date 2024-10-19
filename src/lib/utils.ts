@@ -7,5 +7,5 @@ export function cn(...inputs: ClassValue[]) {
 }
 
 export function hasApplePay() {
-  return typeof window !== "undefined" && window.ApplePaySession;
+  return typeof window !== "undefined" && ApplePaySession;
 }

@@ -4,8 +4,6 @@ import { shopifyApi, ApiVersion, LATEST_API_VERSION } from '@shopify/shopify-api
 
 import { restResources } from "@shopify/shopify-api/rest/admin/2024-07";
 
-import '@shopify/shopify-api/adapters/node';
-
 
 const {
     API_SECRET,

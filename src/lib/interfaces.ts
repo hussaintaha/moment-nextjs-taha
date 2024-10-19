@@ -1,3 +1,8 @@
+
+type ApplePayMerchantCapability = 'supports3DS' | 'supportsCredit' | 'supportsDebit';
+type ApplePaySupportedNetwork = 'visa' | 'masterCard' | 'amex' | 'discover';
+
+
 export interface CartItem {
     id: string;
     productID: string;
@@ -46,7 +51,7 @@ export interface DrawerProps {
     product: Product;
     allProducts: Product[];
     onClose: () => void;
-    from:string;
+    from: string;
     closeDrawer: () => void;
 }
 
@@ -72,4 +77,15 @@ export interface CustomButtonProps {
 export interface CartContextType {
     cartItems: CartItem[] | null;
     setCartItems: React.Dispatch<React.SetStateAction<CartItem[] | null>>;
+}
+
+export interface PaymentRequest {
+    countryCode: string;
+    currencyCode: string;
+    total: {
+        label: string;
+        amount: string;
+    };
+    supportedNetworks: ApplePaySupportedNetwork[];
+    merchantCapabilities: ApplePayMerchantCapability[];
 }

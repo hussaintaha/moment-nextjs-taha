@@ -2,6 +2,7 @@
 import React, { useContext, useEffect, useRef, useState } from 'react';
 
 import { Inter } from "next/font/google";
+import Script from 'next/script';
 
 import "./globals.css";
 
@@ -56,9 +57,11 @@ export default function RootLayout({
     <cartContext.Provider value={{ cartItems: cartData, setCartItems: setCartData }}>
       <html lang="en">
         <head>
-          <script crossOrigin="anonymous"
+          <Script
             src="https://applepay.cdn-apple.com/jsapi/1.latest/apple-pay-sdk.js"
-          ></script>
+            strategy="lazyOnload"
+            crossOrigin="anonymous"
+          />
         </head>
         <body className={inter.className}>{children}</body>
       </html>
@@ -66,13 +69,4 @@ export default function RootLayout({
   );
 }
 
-export const useCartContext = () => {
-  const context = useContext(cartContext);
-
-  if (!context) {
-    throw new Error("useCartContext must be used within a CartProvider");
-  }
-
-  return context;
-};
 

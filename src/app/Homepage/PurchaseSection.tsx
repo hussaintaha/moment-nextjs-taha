@@ -1,15 +1,13 @@
 'use client';
 import { useEffect, useState } from 'react';
-import { useRouter } from 'next/navigation'
 
 import Image from 'next/image';
+import { useRouter } from 'next/navigation';
 
+import { ApplePayButton } from '@/components/ApplePayButton';
 import { Button } from '@/components/ui/button';
-
 import { Card, CardContent, CardFooter } from '@/components/ui/card';
-
 import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group';
-
 import {
   Select,
   SelectContent,
@@ -17,12 +15,9 @@ import {
   SelectTrigger,
   SelectValue,
 } from '@/components/ui/select';
-
-import { useCartContext } from '../layout';
-
-import { ApplePayButton } from '@/components/ApplePayButton';
-
 import { Products } from '@/lib/bin/ProductsData';
+
+import { useCartContext } from '@/context/useCartContext';
 
 const PurchaseSection = () => {
   const [selectedImageIndex, setSelectedImageIndex] = useState(0);
@@ -88,7 +83,7 @@ const PurchaseSection = () => {
   useEffect(() => {
     isNoFrequency && setNoFrequency(false)
     selectedPurchaseOption === "onetime" && setSelectedSubscription('')
-  }, [selectedSubscription, selectedPurchaseOption])
+  }, [selectedSubscription, selectedPurchaseOption, isNoFrequency])
 
   return (
     <div className="container mx-auto grid grid-cols-1 md:grid-cols-2 gap-6 md:gap-12">
