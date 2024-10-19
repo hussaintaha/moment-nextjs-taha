@@ -1,0 +1,253 @@
+import type { NextApiRequest, NextApiResponse } from 'next';
+
+const MAX_RETRIES = 3;
+const RETRY_DELAY_MS = 60 * 1000;
+
+interface GraphQLRequestOptions {
+  query: string;
+  variables?: Record<string, any>;
+  api_version?: string;
+}
+
+export const graphqlRequest = async (
+  { query, variables, api_version = "2024-07" }: GraphQLRequestOptions
+): Promise<any> => {
+  // console.log("query, variables:", query, variables);
+  // console.log("process.env.SHOPIFY_ACCESS_TOKEN       process.env.shopDomain", process.env.SHOPIFY_ACCESS_TOKEN, "    ", process.env.shopDomain);
+
+  for (let attempt = 1; attempt <= MAX_RETRIES; attempt++) {
+    try {
+      const response = await fetch(`https://${process.env.shopDomain}/admin/api/${api_version}/graphql.json`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          "X-Shopify-Access-Token": process.env.SHOPIFY_ACCESS_TOKEN
+        },
+        body: JSON.stringify({
+          query,
+          ...(variables || {})
+        })
+      });
+
+      const data = await response.json();
+
+      if (data.errors || !response.ok) {
+        const errors = data.errors || [{ message: 'Unknown error' }];
+        console.warn(`Error on attempt ${attempt}:`, errors);
+
+        if (attempt === MAX_RETRIES) {
+          console.error(`Failed after ${MAX_RETRIES} attempts:`, errors);
+          throw new Error(`Failed response isn't ok after ${MAX_RETRIES} attempts: ${JSON.stringify(errors)}`);
+        }
+
+        await new Promise(resolve => setTimeout(resolve, RETRY_DELAY_MS));
+        continue;
+      }
+
+      return data;
+    } catch (error) {
+      if (attempt === MAX_RETRIES) {
+        console.error(`Failed after ${MAX_RETRIES} attempts:`, error);
+        throw error;
+      }
+      console.warn(`Retrying request (${attempt}/${MAX_RETRIES}) due to error:`, error);
+      await new Promise(resolve => setTimeout(resolve, RETRY_DELAY_MS));
+      continue;
+    }
+  }
+};
+
+export default async function handler(req: NextApiRequest, res: NextApiResponse) {
+  if (req.method === 'POST') {
+    console.log("Received a POST request.");
+
+    try {
+      const { productID } = req.body;
+
+      if (!productID) {
+        res.status(400).json({ error: "Missing productID" });
+        return;
+      }
+
+      console.log("Product ID:", productID);
+
+      const productVariantsQuery = `
+        query {
+          product(id: "${productID}") {
+            title
+            variants(first: 250) {
+              edges {
+                node {
+                  id
+                  inventoryQuantity
+                  selectedOptions {
+                    name
+                    value
+                  }
+                  inventoryItem {
+                    id
+                    inventoryLevels(first: 10) {
+                      edges {
+                        node {
+                          id
+                          location {
+                            id
+                          }
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      `;
+
+      const dataOfProductVariants = await graphqlRequest({ query: productVariantsQuery });
+      console.log("Product variants data:", dataOfProductVariants);
+
+      res.status(200).json(dataOfProductVariants);
+    } catch (error) {
+      console.error("Error on updateProductInventory:", error);
+      res.status(500).json({ error: "Internal Server Error" });
+    }
+  } else {
+    console.log("Received a non-POST request.");
+    res.setHeader('Allow', ['POST']);
+    res.status(405).end(`Method ${req.method} Not Allowed`);
+  }
+}
+
+
+
+
+
+
+
+
+
+                                      ******************* subscription test ********************
+
+
+
+/..................................................../............................................../................................
+
+
+mutation {
+  cartCreate(
+    input: {
+      lines: [
+        {
+          quantity: 1
+          merchandiseId: "gid://shopify/ProductVariant/45279868813475"
+					sellingPlanId: "gid://shopify/SellingPlan/2137325731"
+        },
+        {
+          quantity: 1
+          merchandiseId: "gid://shopify/ProductVariant/45279871271075"
+        }
+      ],
+      # The information about the buyer that's interacting with the cart.
+      buyerIdentity: {
+        email: "example@example.com",
+        countryCode: CA,
+        # An ordered set of delivery addresses associated with the buyer that's interacting with the cart. The rank of the preferences is determined by the order of the addresses in the array. You can use preferences to populate relevant fields in the checkout flow.
+        deliveryAddressPreferences: {
+          # One-time use address isn't saved to the customer account after checkout
+          oneTimeUse: false,
+          deliveryAddress: {
+            address1: "150 Elgin Street",
+            address2: "8th Floor",
+            city: "Ottawa",
+            province: "Ontario",
+            country: "CA",
+            zip: "K2P 1L4"
+          },
+        },
+        preferences: {
+          delivery: {
+            deliveryMethod: PICK_UP
+          }
+        },
+      }
+      attributes: {
+        key: "cart_attribute",
+        value: "This is a cart attribute"
+      }
+    }
+  ) {
+    cart {
+      id
+      createdAt
+      updatedAt
+      lines(first: 10) {
+        edges {
+          node {
+            id
+            merchandise {
+              ... on ProductVariant {
+                id
+              }
+            }
+          }
+        }
+      }
+      buyerIdentity {
+        deliveryAddressPreferences {
+          __typename
+        }
+        preferences {
+          delivery {
+            deliveryMethod
+          }
+        }
+      }
+      attributes {
+        key
+        value
+      }
+      # The estimated total cost of all merchandise that the customer will pay at checkout.
+      cost {
+        totalAmount {
+          amount
+          currencyCode
+        }
+        # The estimated amount, before taxes and discounts, for the customer to pay at checkout.
+        subtotalAmount {
+          amount
+          currencyCode
+        }
+        # The estimated tax amount for the customer to pay at checkout.
+        totalTaxAmount {
+          amount
+          currencyCode
+        }
+        # The estimated duty amount for the customer to pay at checkout.
+        totalDutyAmount {
+          amount
+          currencyCode
+        }
+      }
+    }
+  }
+}
+
+
+
+/..................................................../............................................../................................
+
+
+                                          ************* checkout url *************
+
+/..................................................../............................................../................................
+
+
+query checkoutURL {
+  cart(id: "gid://shopify/Cart/Z2NwLXVzLWVhc3QxOjAxSjlUVlZOODNWUEhSV1kyMjM0UTdDTlAw?key=bdff3f59aa1fb06bc24d7e57ee1238ae") {
+    checkoutUrl
+  }
+}
+
+
+/..................................................../............................................../................................
