@@ -102,7 +102,10 @@ const Icons = {
 //     session.begin();
 // }
 
-const onApplePayButtonClicked = async () => {
+const onApplePayButtonClicked = async (id: string) => {
+  const slicedVariantID = id.slice(29)
+  console.log("id of variant on apple pay click", slicedVariantID);
+
   try {
     if (!ApplePaySession) {
       return;
@@ -162,6 +165,23 @@ const onApplePayButtonClicked = async () => {
       console.log("paymentResponse ============", paymentResponse);
 
       session.completePayment(paymentResponse.status);
+      if (paymentResponse.status === "success") {
+
+        const response = await fetch("/api/apple-pay-checkoutController", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json"
+          },
+          body: JSON.stringify({
+            variantID: slicedVariantID
+          })
+        })
+
+        if (response.ok) {
+          console.log("handle apple-pay-checkoutController response data.................", response.json())
+        }
+
+      }
     };
 
     session.oncancel = (event: any) => {
@@ -181,11 +201,11 @@ const onApplePayButtonClicked = async () => {
 
 
 
-export const ApplePayButton = () =>
+export const ApplePayButton = ({ id }: any) =>
 // hasApplePay() && 
 (
   <button
-    onClick={onApplePayButtonClicked}
+    onClick={() => onApplePayButtonClicked(id)}
     className={cn(
       buttonVariants({ variant: "default", size: "md" }),
       "w-full gap-1 text-xl",

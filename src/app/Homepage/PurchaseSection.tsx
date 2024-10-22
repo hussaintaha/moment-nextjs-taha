@@ -34,6 +34,8 @@ const PurchaseSection = () => {
   const { cartItems, setCartItems } = context;
   const router = useRouter()
 
+  const product = Products.find(el => el.id === "f35bd066-9377-4d33-b3e9-b6ff4dcd1ba0")
+
   const handleAddToBag = () => {
     if (selectedPurchaseOption === "subscribe") {
       return alert("The subscription feature checkout is temporarily disabled because your store, 'i2rcfs-yf.myshopify.com', does not have a subscription app installed.")
@@ -43,7 +45,7 @@ const PurchaseSection = () => {
       setNoFrequency(true)
       return
     }
-    const product = Products.find(el => el.id === "f35bd066-9377-4d33-b3e9-b6ff4dcd1ba0")
+    // const product = Products.find(el => el.id === "f35bd066-9377-4d33-b3e9-b6ff4dcd1ba0")
     if (!product) return console.warn("product not found on PurchaseDection");
     const randomID = window.crypto.randomUUID()
 
@@ -201,7 +203,7 @@ const PurchaseSection = () => {
             >
               Add to Bag
             </Button>
-            {selectedPurchaseOption === 'onetime' && <ApplePayButton />}
+            {selectedPurchaseOption === 'onetime' && <ApplePayButton id={product?.variantID} />}
           </div>
 
           {/* </CardFooter> */}

@@ -9,6 +9,8 @@ import { Shopify, session } from '@/utils/Shopify';
 export default async function handler(req: NextApiRequest, res: NextApiResponse) {
   if (req.method === 'POST') {
     console.log("Received a POST request.");
+    const data = req.body;
+    console.log("data on checkout controller apple pay...............", data);
 
     const client = new Shopify.clients.Rest({ session });
     const orderCreateData = await client.post({
@@ -17,7 +19,8 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
         order: {
           name: `external_site_order`,
           line_items: [{
-            variant_id: "45279871271075",     // "still & sparkling variety (18 pack)" product variant id 
+            // variant_id: "45279871271075",     // "still & sparkling variety (18 pack)" product variantID
+            variant_id: data.variantID,
             quantity: 1,
           }],
           customer: {
