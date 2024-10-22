@@ -13,17 +13,17 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
             const merchantIdentifier = 'merchant.metammerce';
             // const certificate = await fs.readFile(process.cwd() + '/ApplePay.crt.pem', 'utf8');
 
-            const response = await fetch(`https://${validationURL}/paymentSession`, {
+            const response = await fetch(validationURL, {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
-                    'Apple-Pay-Transaction-Id': merchantIdentifier,
+                    // 'Apple-Pay-Transaction-Id': merchantIdentifier,
                 },
                 body: JSON.stringify({
                     merchantIdentifier,
                     displayName: 'metammerce',
-                    initiative: 'https://moment-nextjs-taha.vercel.app/',
-                    initiativeContext: 'web',
+                    initiative: 'web',
+                    initiativeContext: 'https://moment-nextjs-taha.vercel.app/',
                 }),
             });
             const merchantSession = await response.json();
