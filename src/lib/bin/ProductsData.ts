@@ -3,8 +3,8 @@ import { Product } from "../interfaces";
 export const Products: Product[] = [
   {
     id: "f35bd066-9377-4d33-b3e9-b6ff4dcd1ba0",
-    productID: "gid://shopify/Product/7737148178688",
-    variantID: "gid://shopify/ProductVariant/42770230673664",
+    productID: "gid://shopify/Product/8479544574109",
+    variantID: "gid://shopify/ProductVariant/46085726306461",
     name: 'still & sparkling variety (18 pack)',
     image: '/products/product_img_1.svg',
     price: 48,
@@ -32,8 +32,8 @@ export const Products: Product[] = [
   },
   {
     id: "702e1f8a-21aa-4ef9-b4a2-9406ce4cb939",
-    productID: "gid://shopify/Product/6924359565473",
-    variantID: "gid://shopify/ProductVariant/40622566539425",
+    productID: "gid://shopify/Product/8479547654301",
+    variantID: "gid://shopify/ProductVariant/46085733253277",
     name: 'cherry hibiscus adaptogen drink (12 pack)',
     image: '/products/product_img_2.svg',
     price: 40,
@@ -59,8 +59,8 @@ export const Products: Product[] = [
   },
   {
     id: "87a41572-29e0-4916-b5bf-7f84170db70c",
-    productID: "gid://shopify/Product/7533227475200",
-    variantID: "gid://shopify/ProductVariant/42264375984384",
+    productID: "gid://shopify/Product/8479545622685",
+    variantID: "gid://shopify/ProductVariant/46085728207005",
     name: 'lychee mint adaptogen drink (12 pack)',
     image: '/products/product_img_3.svg',
     price: 40,
@@ -86,8 +86,8 @@ export const Products: Product[] = [
   },
   {
     id: "82743fe6-a05f-4134-a56c-b84d67f038a4",
-    productID: "gid://shopify/Product/6924348588193",
-    variantID: "gid://shopify/ProductVariant/40608039239841",
+    productID: "gid://shopify/Product/8479547719837",
+    variantID: "gid://shopify/ProductVariant/46085733482653",
     name: 'blueberry ginger adaptogen drink (12 pack)',
     image: '/products/product_img_4.svg',
     price: 40,

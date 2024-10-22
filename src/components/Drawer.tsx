@@ -48,6 +48,10 @@ const Drawer: React.FC<DrawerProps> = ({ product, allProducts, onClose, from, cl
   }, [selectedSubscription, selectedPurchaseOption, isNoFrequency])
 
   const handleAddToBag = () => {
+    if (selectedPurchaseOption === "subscribe") {
+      return alert("The subscription feature checkout is temporarily disabled because your store, 'i2rcfs-yf.myshopify.com', does not have a subscription app installed.")
+    }
+
     const randomID = window.crypto.randomUUID()
     if (selectedPurchaseOption === "subscribe" && !selectedSubscription) {
       setNoFrequency(true)

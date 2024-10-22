@@ -35,6 +35,10 @@ const PurchaseSection = () => {
   const router = useRouter()
 
   const handleAddToBag = () => {
+    if (selectedPurchaseOption === "subscribe") {
+      return alert("The subscription feature checkout is temporarily disabled because your store, 'i2rcfs-yf.myshopify.com', does not have a subscription app installed.")
+    }
+
     if (selectedPurchaseOption === "subscribe" && !selectedSubscription) {
       setNoFrequency(true)
       return
