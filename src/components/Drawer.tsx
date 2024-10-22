@@ -212,7 +212,7 @@ const Drawer: React.FC<DrawerProps> = ({ product, allProducts, onClose, from, cl
                             <span className="font-semibold">
                               One-Time Purchase
                             </span>
-                            <span>$54</span>
+                            <span>$0.01</span>
                           </div>
                         </div>
                       </div>

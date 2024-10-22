@@ -114,7 +114,7 @@ const onApplePayButtonClicked = async () => {
       currencyCode: 'USD',
       total: {
         label: 'metammerce',
-        amount: '10.00', // Total amount to charge
+        amount: '0.01', // Total amount to charge
       },
       supportedNetworks: ['visa', 'masterCard', 'amex'],
       merchantCapabilities: ['supports3DS'],

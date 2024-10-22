@@ -172,7 +172,7 @@ const PurchaseSection = () => {
                   <div className="flex-grow">
                     <div className="flex justify-between">
                       <span className="font-semibold">One-Time Purchase</span>
-                      <span>$54</span>
+                      <span>$0.01</span>
                     </div>
                   </div>
                 </div>
