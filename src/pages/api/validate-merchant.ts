@@ -5,13 +5,15 @@ import { promises as fs } from 'fs';
 export default async function handler(req: NextApiRequest, res: NextApiResponse) {
     if (req.method === 'POST') {
         try {
+
+            // my code last time
             const { validationURL } = req.body;
             console.log("validationURL", validationURL);
 
             const merchantIdentifier = 'merchant.metammerce';
             // const certificate = await fs.readFile(process.cwd() + '/ApplePay.crt.pem', 'utf8');
 
-            const response = await fetch(validationURL, {
+            const response = await fetch(`https://${validationURL}/paymentSession`, {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
@@ -20,8 +22,8 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
                 body: JSON.stringify({
                     merchantIdentifier,
                     displayName: 'metammerce',
-                    initiative: 'web',
-                    initiativeContext: 'www.metammerce.com',
+                    initiative: 'https://moment-nextjs-taha.vercel.app/',
+                    initiativeContext: 'web',
                 }),
             });
             const merchantSession = await response.json();
