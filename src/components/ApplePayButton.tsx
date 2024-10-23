@@ -104,7 +104,7 @@ const Icons = {
 
 const onApplePayButtonClicked = async (id: string, price: any) => {
   const slicedVariantID = id.slice(29)
-  console.log("id of variant on apple pay click123", slicedVariantID);
+  console.log("id of variant on apple pay click1234", slicedVariantID);
 
   try {
     if (!ApplePaySession) {
