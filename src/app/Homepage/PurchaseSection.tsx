@@ -127,7 +127,7 @@ const PurchaseSection = () => {
                 still & sparkling variety (18 pack)
               </h2>
               <p className="text-lg">
-                $49 <span className="line-through text-gray-500">$54</span>
+                $48 <span className="line-through text-gray-500">$54</span>
                 <span className="bg-[#f4ff73] rounded-lg px-2 py-1 ml-2 text-sm">
                   9% OFF
                 </span>
@@ -203,7 +203,7 @@ const PurchaseSection = () => {
             >
               Add to Bag
             </Button>
-            {selectedPurchaseOption === 'onetime' && <ApplePayButton id={product?.variantID} />}
+            {selectedPurchaseOption === 'onetime' && <ApplePayButton id={product?.variantID} price={product?.price} />}
           </div>
 
           {/* </CardFooter> */}

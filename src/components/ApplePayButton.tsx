@@ -102,9 +102,9 @@ const Icons = {
 //     session.begin();
 // }
 
-const onApplePayButtonClicked = async (id: string) => {
+const onApplePayButtonClicked = async (id: string, price: any) => {
   const slicedVariantID = id.slice(29)
-  console.log("id of variant on apple pay click", slicedVariantID);
+  console.log("id of variant on apple pay click123", slicedVariantID);
 
   try {
     if (!ApplePaySession) {
@@ -201,11 +201,11 @@ const onApplePayButtonClicked = async (id: string) => {
 
 
 
-export const ApplePayButton = ({ id }: any) =>
+export const ApplePayButton = ({ id, price }: any) =>
 // hasApplePay() && 
 (
   <button
-    onClick={() => onApplePayButtonClicked(id)}
+    onClick={() => onApplePayButtonClicked(id, price)}
     className={cn(
       buttonVariants({ variant: "default", size: "md" }),
       "w-full gap-1 text-xl",

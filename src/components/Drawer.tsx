@@ -299,7 +299,7 @@ const Drawer: React.FC<DrawerProps> = ({ product, allProducts, onClose, from, cl
             >
               Add to Bag
             </Button>
-            {selectedPurchaseOption === 'onetime' && <ApplePayButton id={product?.variantID} />}
+            {selectedPurchaseOption === 'onetime' && <ApplePayButton id={product?.variantID} price={0.01} />}
           </div>
           {/* <button className="w-full bg-[#515151] text-white py-2 px-4 rounded-lg" onClick={handleAddToBag}>
               Add to Bag
