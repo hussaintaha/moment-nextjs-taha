@@ -23,7 +23,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
                     merchantIdentifier,
                     displayName: 'metammerce',
                     initiative: 'web',
-                    initiativeContext: 'https://moment-nextjs-taha.vercel.app/',
+                    initiativeContext: 'moment-nextjs-taha.vercel.app',
                 }),
             });
             const merchantSession = await response.json();
