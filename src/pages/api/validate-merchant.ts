@@ -1,5 +1,5 @@
 import { NextApiRequest, NextApiResponse } from 'next';
-import fs from 'fs';
+import { promises as fs } from 'fs';
 import https from 'https';
 
 export default async function handler(req: NextApiRequest, res: NextApiResponse) {
@@ -14,7 +14,8 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
                 return res.status(500).json({ error: 'Certificate path is not defined.' });
             }
 
-            const cert = fs.readFileSync(certPath);
+            console.log("process.cwd()", process.cwd());
+            const cert = await fs.readFile(process.cwd() + certPath, 'utf8');
 
             console.log("cert", cert);
 
