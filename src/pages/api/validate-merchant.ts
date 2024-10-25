@@ -17,7 +17,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
-                    // 'Apple-Pay-Transaction-Id': merchantIdentifier,
+                    'Apple-Pay-Transaction-Id': merchantIdentifier,
                 },
                 body: JSON.stringify({
                     merchantIdentifier,
@@ -28,6 +28,12 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
             });
             const merchantSession = await response.json();
             console.log("merchantSession-------------", merchantSession);
+
+            if (!response.ok) {
+                const errorDetails = await response.text(); // Get response body for more insights
+                throw new Error(`HTTP error! status: ${response.status}, details: ${errorDetails}`);
+            }
+        
 
             res.status(200).json(merchantSession);
         } catch (error) {
