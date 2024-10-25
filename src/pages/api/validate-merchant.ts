@@ -5,17 +5,13 @@ import https from 'https';
 export default async function handler(req: NextApiRequest, res: NextApiResponse) {
     if (req.method === 'POST') {
         try {
-            const certPath = process.env.APPLE_PAY_CERT_PATH;
-
-            console.log("certPath", certPath);
-
+            const certPath = '/file-c/apple_pay.pem'; 
 
             if (!certPath) {
                 return res.status(500).json({ error: 'Certificate path is not defined.' });
             }
 
-            console.log("process.cwd()", process.cwd());
-            const cert = await fs.readFile(process.cwd() + certPath, 'utf8');
+            const cert = await fs.readFile(`./public${certPath}`, 'utf8');
 
             console.log("cert", cert);
 
@@ -51,7 +47,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
                         'Content-Type': 'application/json',
                         'Apple-Pay-Transaction-Id': merchantIdentifier,
                     },
-                    agent,
+                    cert: cert,
                 }, (response) => {
                     let data = '';
                     response.on('data', (chunk) => {
