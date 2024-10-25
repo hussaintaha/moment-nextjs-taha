@@ -1,31 +1,31 @@
 import { NextApiRequest, NextApiResponse } from 'next';
-import { promises as fs } from 'fs';
 import https from 'https';
+import fs from 'fs/promises';
+import path from 'path';
+import getConfig from 'next/config';
 
 export default async function handler(req: NextApiRequest, res: NextApiResponse) {
     if (req.method === 'POST') {
         try {
-            const certPath = '/file-c/apple_pay.pem'; 
+            const { serverRuntimeConfig } = getConfig();
+            const dirRelativeToPublicFolder = 'img';
+            console.log("serverRuntimeConfig.PROJECT_ROOT", serverRuntimeConfig.PROJECT_ROOT);
 
-            if (!certPath) {
-                return res.status(500).json({ error: 'Certificate path is not defined.' });
-            }
+            const dir = path.join(serverRuntimeConfig.PROJECT_ROOT, './public');
 
-            const cert = await fs.readFile(`./public${certPath}`, 'utf8');
+            console.log("dir", dir);
 
+            const certPath = path.join(dir, process.env.APPLE_PAY_CERT_PATH || '');
+            console.log("certPath", certPath);
+
+            const cert = await fs.readFile(certPath);
             console.log("cert", cert);
-
 
             const agent = new https.Agent({
                 cert,
             });
 
-            console.log("agent", agent);
-
             const { validationURL } = req.body;
-
-            console.log("validationURL", validationURL);
-
 
             if (!validationURL) {
                 return res.status(400).json({ error: 'Validation URL is required.' });
@@ -39,7 +39,6 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
                 initiativeContext: 'moment-nextjs-taha.vercel.app',
             });
 
-            // Use Node.js https.request instead of fetch
             const response = await new Promise((resolve, reject) => {
                 const request = https.request(validationURL, {
                     method: 'POST',
@@ -47,7 +46,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
                         'Content-Type': 'application/json',
                         'Apple-Pay-Transaction-Id': merchantIdentifier,
                     },
-                    cert: cert,
+                    agent,
                 }, (response) => {
                     let data = '';
                     response.on('data', (chunk) => {
@@ -63,19 +62,13 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
                 request.end();
             });
 
-            const { status, data } = response as { status: number; data: string };
-
-            console.log("status, data", status, data);
-
+            const { status, data } = response;
 
             if (status !== 200) {
                 throw new Error(`HTTP error! status: ${status}`);
             }
 
             const merchantSession = JSON.parse(data);
-
-            console.log("merchantSession", merchantSession);
-
             res.status(200).json(merchantSession);
         } catch (error: any) {
             console.error("Error occurred on validate-merchant:", error);
