@@ -1,8 +1,7 @@
 import { NextApiRequest, NextApiResponse } from 'next';
 import https from 'https';
-import fs from 'fs/promises';
 import path from 'path';
-import getConfig from 'next/config';
+import { promises as fs } from 'fs';
 
 interface ApiResponse {
     status: number;
@@ -12,25 +11,26 @@ interface ApiResponse {
 export default async function handler(req: NextApiRequest, res: NextApiResponse) {
     if (req.method === 'POST') {
         try {
-            const { serverRuntimeConfig } = getConfig();
-            const dirRelativeToPublicFolder = 'img';
-            console.log("serverRuntimeConfig.PROJECT_ROOT", serverRuntimeConfig.PROJECT_ROOT);
+            // const certPath = process.env.APPLE_PAY_CERT_PATH;
 
-            const dir = path.join(serverRuntimeConfig.PROJECT_ROOT, './public');
 
-            console.log("dir", dir);
-
-            const certPath = path.join(dir, process.env.APPLE_PAY_CERT_PATH || '');
+            const certPath = path.resolve('./public', 'file-c', 'apple_pay.pem')
             console.log("certPath", certPath);
 
-            const cert = await fs.readFile(certPath);
+            if (!certPath) {
+                return res.status(500).json({ error: 'Certificate path is not defined.' });
+            }
+            const cert = await fs.readFile(certPath, 'utf8');
             console.log("cert", cert);
 
             const agent = new https.Agent({
-                cert,
+                cert: certPath,
             });
 
             const { validationURL } = req.body;
+
+            console.log("validationURL", validationURL);
+
 
             if (!validationURL) {
                 return res.status(400).json({ error: 'Validation URL is required.' });
@@ -49,9 +49,8 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
                     method: 'POST',
                     headers: {
                         'Content-Type': 'application/json',
-                        'Apple-Pay-Transaction-Id': merchantIdentifier,
                     },
-                    agent,
+                    agent
                 }, (response) => {
                     let data = '';
                     response.on('data', (chunk) => {
