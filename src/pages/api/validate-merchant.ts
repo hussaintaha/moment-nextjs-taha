@@ -4,6 +4,11 @@ import fs from 'fs/promises';
 import path from 'path';
 import getConfig from 'next/config';
 
+interface ApiResponse {
+    status: number;
+    data: any;
+}
+
 export default async function handler(req: NextApiRequest, res: NextApiResponse) {
     if (req.method === 'POST') {
         try {
@@ -62,7 +67,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
                 request.end();
             });
 
-            const { status, data } = response;
+            const { status, data } = response as ApiResponse;
 
             if (status !== 200) {
                 throw new Error(`HTTP error! status: ${status}`);
