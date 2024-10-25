@@ -1,49 +1,85 @@
 import { NextApiRequest, NextApiResponse } from 'next';
-
 import fs from 'fs';
-import https from 'https'
-// import { promises as fs } from 'fs';
+import https from 'https';
 
 export default async function handler(req: NextApiRequest, res: NextApiResponse) {
     if (req.method === 'POST') {
         try {
-            console.log("process.env.APPLE_PAY_CERT_PATH", process.env.APPLE_PAY_CERT_PATH);
+            const certPath = process.env.APPLE_PAY_CERT_PATH;
 
-            const agent = new https.Agent({
-                cert: fs.readFileSync(process.env.APPLE_PAY_CERT_PATH || ''),
-            });
-            const { validationURL } = req.body;
-            console.log("validationURL", validationURL);
+            console.log("certPath", certPath);
 
-            const merchantIdentifier = 'merchant.metammerce';
-            // const certificate = await fs.readFile(process.cwd() + '/ApplePay.crt.pem', 'utf8');
 
-            const response = await fetch(validationURL, {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                    'Apple-Pay-Transaction-Id': merchantIdentifier,
-                },
-                body: JSON.stringify({
-                    merchantIdentifier,
-                    displayName: 'metammerce',
-                    initiative: 'web',
-                    initiativeContext: 'moment-nextjs-taha.vercel.app',
-                }),
-                agent
-            });
-            const merchantSession = await response.json();
-            console.log("merchantSession-------------", merchantSession);
-
-            if (!response.ok) {
-                const errorDetails = await response.text(); // Get response body for more insights
-                throw new Error(`HTTP error! status: ${response.status}, details: ${errorDetails}`);
+            if (!certPath) {
+                return res.status(500).json({ error: 'Certificate path is not defined.' });
             }
 
+            const cert = fs.readFileSync(certPath);
+
+            const agent = new https.Agent({
+                cert,
+            });
+
+            console.log("agent", agent);
+
+            const { validationURL } = req.body;
+
+            console.log("validationURL", validationURL);
+
+
+            if (!validationURL) {
+                return res.status(400).json({ error: 'Validation URL is required.' });
+            }
+
+            const merchantIdentifier = 'merchant.metammerce';
+            const requestData = JSON.stringify({
+                merchantIdentifier,
+                displayName: 'metammerce',
+                initiative: 'web',
+                initiativeContext: 'moment-nextjs-taha.vercel.app',
+            });
+
+            // Use Node.js https.request instead of fetch
+            const response = await new Promise((resolve, reject) => {
+                const request = https.request(validationURL, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Apple-Pay-Transaction-Id': merchantIdentifier,
+                    },
+                    agent,
+                }, (response) => {
+                    let data = '';
+                    response.on('data', (chunk) => {
+                        data += chunk;
+                    });
+                    response.on('end', () => {
+                        resolve({ status: response.statusCode, data });
+                    });
+                });
+
+                request.on('error', reject);
+                request.write(requestData);
+                request.end();
+            });
+
+            const { status, data } = response as { status: number; data: string };
+
+            console.log("status, data", status, data);
+
+
+            if (status !== 200) {
+                throw new Error(`HTTP error! status: ${status}`);
+            }
+
+            const merchantSession = JSON.parse(data);
+
+            console.log("merchantSession", merchantSession);
 
             res.status(200).json(merchantSession);
-        } catch (error) {
-            console.log("error occured on validate-merchant", error);
+        } catch (error: any) {
+            console.error("Error occurred on validate-merchant:", error);
+            res.status(500).json({ error: error.message });
         }
     } else {
         res.setHeader('Allow', ['POST']);
