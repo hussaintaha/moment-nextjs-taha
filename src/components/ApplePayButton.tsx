@@ -132,7 +132,7 @@ const onApplePayButtonClicked = async (id: string, price: any) => {
 
       const merchantSession = await fetch('/api/validate-merchant', {
         method: 'POST',
-        body: JSON.stringify({ validationURL: event.validationURL }),
+        body: JSON.stringify({ validationURL: event.validationURL }),  // from here https://developer.apple.com/documentation/apple_pay_on_the_web/applepayvalidatemerchantevent/1778026-validationurl
         headers: {
           'Content-Type': 'application/json',
         },
