@@ -5,16 +5,14 @@ import https from 'https';
 export default async function handler(req: NextApiRequest, res: NextApiResponse) {
     if (req.method === 'POST') {
         try {
-            const certPath = process.env.APPLE_PAY_CERT_PATH;
+            const certBase64 = process.env.APPLE_PAY_CERT_PATH;
+            console.log("certBase64", certBase64);
 
-            console.log("certPath", certPath);
-
-
-            if (!certPath) {
-                return res.status(500).json({ error: 'Certificate path is not defined.' });
+            if (!certBase64) {
+                return res.status(500).json({ error: 'Certificate is not defined.' });
             }
 
-            const cert = fs.readFileSync(certPath);
+            const cert = Buffer.from(certBase64, 'base64').toString('utf-8');
 
             const agent = new https.Agent({
                 cert,
