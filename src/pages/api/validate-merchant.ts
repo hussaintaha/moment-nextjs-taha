@@ -43,7 +43,8 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
                 initiative: 'web',
                 initiativeContext: 'moment-nextjs-taha.vercel.app',
             });
-
+// BEGIN CERTIFICATE
+// END CERTIFICATE
             const response = await new Promise((resolve, reject) => {
                 const request = https.request(validationURL, {
                     method: 'POST',
