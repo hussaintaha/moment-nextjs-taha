@@ -138,6 +138,11 @@ const onApplePayButtonClicked = async (id: string, price: any) => {
         },
       });
 
+      if (!merchantSession.ok) {
+        console.error("Error from API:", merchantSession.status, await merchantSession.text());
+        return;
+      }
+
       const sessionData = await merchantSession.json();
       console.log("sessionData ==============", sessionData);
       session.completeMerchantValidation(sessionData);
