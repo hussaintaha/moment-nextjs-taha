@@ -13,28 +13,24 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
     if (req.method === 'POST') {
         try {
             // const certPath = process.env.APPLE_PAY_CERT_PATH;
-            const certPath = path.resolve('./public', 'file-c', 'ApplePay.crt.pem')
-            const keyPath = path.resolve('./public', 'file-c', 'ApplePay.key.pem')
+            // const certPath = path.resolve('./public', 'file-c', 'ApplePay.crt.pem')
+            // const keyPath = path.resolve('./public', 'file-c', 'ApplePay.key.pem')
+            // console.log("certPath", certPath);
+            // console.log("keyPath", keyPath);
+            // if (!certPath || !keyPath) {
+            //     return res.status(500).json({ error: 'Certificate path or Key path is not defined.' });
+            // }
 
-            console.log("certPath", certPath);
-            console.log("keyPath", keyPath);
+            const cert = process.env.APPLE_PAY_CERT
+            const key = process.env.APPLE_PAY_KEY
 
-
-            if (!certPath || !keyPath) {
-                return res.status(500).json({ error: 'Certificate path or Key path is not defined.' });
-            }
-
-            const cert = await fs.readFileSync(certPath, 'utf8');
-            const key = await fs.readFileSync(keyPath, 'utf8');
-
-            console.log("cert", cert);
-            console.log("key", key);
-
+            // console.log("cert", cert);
+            // console.log("key", key);
 
             const agent = new https.Agent({
                 cert: cert,
                 key: key,
-                // passphrase: "letsgetlost100!"
+                passphrase: process.env.PASS_PHRASE
             });
 
             console.log("agent", agent.options.cert);
@@ -78,7 +74,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
                 request.write(requestData);
                 request.end();
             });
-            
+
             const { status, data } = await response as ApiResponse;
             console.log("status, data", status, data);
 
@@ -97,6 +93,6 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
         }
     } else {
         res.setHeader('Allow', ['POST']);
-       return res.status(405).end(`Method ${req.method} Not Allowed`);
+        return res.status(405).end(`Method ${req.method} Not Allowed`);
     }
 }
