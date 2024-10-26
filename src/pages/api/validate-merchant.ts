@@ -23,9 +23,11 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
 
             const cert = process.env.APPLE_PAY_CERT
             const key = process.env.APPLE_PAY_KEY
+            const passphrase = process.env.PASS_PHRASE
 
-            // console.log("cert", cert);
-            // console.log("key", key);
+            console.log("cert", cert);
+            console.log("key", key);
+            console.log("passphrase", passphrase);
 
             const agent = new https.Agent({
                 cert: cert,
