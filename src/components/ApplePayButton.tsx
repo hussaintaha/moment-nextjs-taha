@@ -3,6 +3,7 @@ import { buttonVariants } from "@/components/ui/button";
 import { PaymentRequest } from "@/lib/interfaces";
 
 import { cn, hasApplePay } from "@/lib/utils";
+import { calculateNewTotal, calculateNewLineItems, calculateNewShippingMethods, calculateErrors } from "./functions";
 
 const Icons = {
   apple: (props: any) => (
@@ -110,6 +111,10 @@ const onApplePayButtonClicked = async (id: string, price: any) => {
     if (!ApplePaySession) {
       return;
     }
+
+    let billingContact
+    let shippingContact
+
     // if (window.ApplePaySession && window.ApplePaySession.canMakePayments()) {
     console.log("trigger onApplePayButtonClicked function");
     const paymentRequest: PaymentRequest = {
@@ -157,8 +162,10 @@ const onApplePayButtonClicked = async (id: string, price: any) => {
       // No updates or errors are needed, pass an empty object.
       const update = {
         newTotal: {
-          label: 'metammerce',
-          amount: '1',
+          label: 'One Time Payment',
+          amount: '1.00',
+          // type: "final",
+          // paymentTiming: "immediate",
         }
       }
       session.completePaymentMethodSelection(update);
@@ -166,13 +173,19 @@ const onApplePayButtonClicked = async (id: string, price: any) => {
 
     session.onshippingmethodselected = event => {
       console.log("onshippingmethodselected  event", event);
+      const shippingMethodData = event?.shippingMethod
+
+      console.log("shippingMethodData", shippingMethodData);
 
       // Define ApplePayShippingMethodUpdate based on the selected shipping method.
       // No updates or errors are needed, pass an empty object. 
       const update = {
+        status: "STATUS_SUCCESS",
         newTotal: {
-          label: 'metammerce',
-          amount: '1',
+          label: 'One Time Payment',
+          amount: '1.00',
+          // type: "final",
+          // paymentTiming: "immediate",
         }
       }
       session.completeShippingMethodSelection(update);
@@ -181,15 +194,21 @@ const onApplePayButtonClicked = async (id: string, price: any) => {
     session.onshippingcontactselected = event => {
       // Define ApplePayShippingContactUpdate based on the selected shipping contact.
       console.log("onshippingcontactselected event:", event);
-      const selectedShippingContact = event.shippingContact;
+      const selectedShippingContact = event?.shippingContact;
 
       console.log("selectedShippingContact", selectedShippingContact);
 
-      // below is only for now just for testing 
       const update = {
+        status: "STATUS_SUCCESS",
+        newShippingMethods: [{
+          label: "Free Shipping",
+          detail: "Arrives in 5 to 7 days",
+          amount: "0.00",
+          identifier: "FreeShip"
+        }],
         newTotal: {
           label: 'metammerce',
-          amount: '1',
+          amount: '1.00',
         }
       }
 
@@ -200,8 +219,11 @@ const onApplePayButtonClicked = async (id: string, price: any) => {
       console.log("onpaymentauthorized event------------>", event);
       const paymentData = event.payment;
 
+      billingContact = event.billingContact
+      shippingContact = event.shippingContact
+
       const paymentDetails = {
-        amount: parseFloat(paymentData.transaction.amount),
+        amount: "1.00",
         currency: paymentData.transaction.currency || 'USD',
         token: paymentData.token,
       };
@@ -220,7 +242,7 @@ const onApplePayButtonClicked = async (id: string, price: any) => {
       session.completePayment(paymentResponse.status);
       console.log("oncomplete  payment");
 
-      if (paymentResponse.status === "success") {
+      if (paymentResponse.status === "STATUS_SUCCESS") {
 
         const response = await fetch("/api/apple-pay-checkoutController", {
           method: "POST",
@@ -228,7 +250,9 @@ const onApplePayButtonClicked = async (id: string, price: any) => {
             "Content-Type": "application/json"
           },
           body: JSON.stringify({
-            variantID: slicedVariantID
+            variantID: slicedVariantID,
+            billingContact,
+            shippingContact
           })
         })
 
@@ -244,17 +268,17 @@ const onApplePayButtonClicked = async (id: string, price: any) => {
       console.log("oncouponcodechanged event:.........", event);
 
       // Define ApplePayCouponCodeUpdate
-      // const newTotal = calculateNewTotal(event.couponCode);
-      // const newLineItems = calculateNewLineItems(event.couponCode);
-      // const newShippingMethods = calculateNewShippingMethods(event.couponCode);
-      // const errors = calculateErrors(event.couponCode);
+      const newTotal = calculateNewTotal(event.couponCode, price);
+      const newLineItems = calculateNewLineItems(event.couponCode);
+      const newShippingMethods = calculateNewShippingMethods(event.couponCode);
+      const errors = calculateErrors(event.couponCode);
 
-      // session.completeCouponCodeChange({
-      //   newTotal: newTotal,
-      //   newLineItems: newLineItems,
-      //   newShippingMethods: newShippingMethods,
-      //   errors: errors,
-      // });
+      session.completeCouponCodeChange({
+        newTotal: newTotal,
+        newLineItems: newLineItems,
+        newShippingMethods: newShippingMethods,
+        // errors: errors,
+      });
     };
 
     session.oncancel = (event: any) => {

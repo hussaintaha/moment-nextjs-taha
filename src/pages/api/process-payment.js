@@ -31,10 +31,18 @@ export default async function handler(req, res) {
                 confirm: true,
             });
 
+            // const paymentIntent = await stripe.paymentIntents.create({
+            //     amount: Math.round(paymentData.amount * 100),
+            //     currency: 'usd',
+            //     automatic_payment_methods: {
+            //         enabled: true,
+            //     },
+            // });
+
             console.log("paymentIntent-------------->", paymentIntent);
 
 
-            res.status(200).json({ status: 'success', paymentIntent });
+            res.status(200).json({ status: 'STATUS_SUCCESS', paymentIntent });
         } catch (error) {
             console.error('Payment error:', error);
             res.status(500).json({ status: 'error', message: error.message });

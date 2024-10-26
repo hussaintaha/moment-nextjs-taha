@@ -25,17 +25,17 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
             const key = process.env.APPLE_PAY_KEY
             const passphrase = process.env.PASS_PHRASE
 
-            console.log("cert", cert);
-            console.log("key", key);
-            console.log("passphrase", passphrase);
+            // console.log("cert", cert);
+            // console.log("key", key);
+            // console.log("passphrase", passphrase);
 
-            const agent = new https.Agent({
-                cert: cert,
-                key: key,
-                passphrase: process.env.PASS_PHRASE
-            });
+            // const agent = new https.Agent({
+            //     cert: cert,
+            //     key: key,
+            //     passphrase: passphrase
+            // });
 
-            console.log("agent", agent.options.cert);
+            // console.log("agent", agent.options.cert);
 
             const { validationURL } = req.body;
 
@@ -61,7 +61,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
                     },
                     cert: cert,
                     key: key,
-                    passphrase: "letsgetlost100!"
+                    passphrase: passphrase
                 }, (response) => {
                     let data = '';
                     response.on('data', (chunk) => {
