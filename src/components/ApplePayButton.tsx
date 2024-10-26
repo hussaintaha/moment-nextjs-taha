@@ -148,6 +148,54 @@ const onApplePayButtonClicked = async (id: string, price: any) => {
       session.completeMerchantValidation(sessionData.data);
     };
 
+    session.onpaymentmethodselected = event => {
+      console.log("onpaymentmethodselected  event:", event);
+      let myPaymentMethod = event.paymentMethod;
+
+      console.log("myPaymentMethod", myPaymentMethod);
+      // Define ApplePayPaymentMethodUpdate based on the selected payment method.
+      // No updates or errors are needed, pass an empty object.
+      const update = {
+        newTotal: {
+          label: 'metammerce',
+          amount: '1',
+        }
+      }
+      session.completePaymentMethodSelection(update);
+    };
+
+    session.onshippingmethodselected = event => {
+      console.log("onshippingmethodselected  event", event);
+
+      // Define ApplePayShippingMethodUpdate based on the selected shipping method.
+      // No updates or errors are needed, pass an empty object. 
+      const update = {
+        newTotal: {
+          label: 'metammerce',
+          amount: '1',
+        }
+      }
+      session.completeShippingMethodSelection(update);
+    };
+
+    session.onshippingcontactselected = event => {
+      // Define ApplePayShippingContactUpdate based on the selected shipping contact.
+      console.log("onshippingcontactselected event:", event);
+      const selectedShippingContact = event.shippingContact;
+
+      console.log("selectedShippingContact", selectedShippingContact);
+
+      // below is only for now just for testing 
+      const update = {
+        newTotal: {
+          label: 'metammerce',
+          amount: '1',
+        }
+      }
+
+      session.completeShippingContactSelection(update);
+    };
+
     session.onpaymentauthorized = async (event: any) => {
       console.log("onpaymentauthorized event------------>", event);
       const paymentData = event.payment;
@@ -191,10 +239,28 @@ const onApplePayButtonClicked = async (id: string, price: any) => {
       }
     };
 
-    // session.oncancel = (event: any) => {
-    //   console.log("oncancel event------------>", event);
-    //   // Payment canceled by WebKit
-    // };
+    session.oncouponcodechanged = event => {
+
+      console.log("oncouponcodechanged event:.........", event);
+
+      // Define ApplePayCouponCodeUpdate
+      // const newTotal = calculateNewTotal(event.couponCode);
+      // const newLineItems = calculateNewLineItems(event.couponCode);
+      // const newShippingMethods = calculateNewShippingMethods(event.couponCode);
+      // const errors = calculateErrors(event.couponCode);
+
+      // session.completeCouponCodeChange({
+      //   newTotal: newTotal,
+      //   newLineItems: newLineItems,
+      //   newShippingMethods: newShippingMethods,
+      //   errors: errors,
+      // });
+    };
+
+    session.oncancel = (event: any) => {
+      console.log("oncancel event------------>", event);
+      // Payment canceled by WebKit
+    };
 
     session.begin();
     // } else {
