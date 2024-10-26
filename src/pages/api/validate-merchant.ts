@@ -78,14 +78,18 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
                 request.write(requestData);
                 request.end();
             });
-
-            const { status, data } = response as ApiResponse;
+            
+            const { status, data } = await response as ApiResponse;
+            console.log("status, data", status, data);
 
             if (status !== 200) {
                 throw new Error(`HTTP error! status: ${status}`);
             }
 
             const merchantSession = JSON.parse(data);
+
+            console.log("merchantSession", merchantSession);
+
             res.status(200).json(merchantSession);
         } catch (error: any) {
             console.error("Error occurred on validate-merchant:", error);

@@ -165,6 +165,8 @@ const onApplePayButtonClicked = async (id: string, price: any) => {
       console.log("paymentResponse ============", paymentResponse);
 
       session.completePayment(paymentResponse.status);
+      console.log("oncomplete  payment");
+
       if (paymentResponse.status === "success") {
 
         const response = await fetch("/api/apple-pay-checkoutController", {
