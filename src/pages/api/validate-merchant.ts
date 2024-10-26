@@ -90,7 +90,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
 
             console.log("merchantSession", merchantSession);
 
-            return res.status(200).json(merchantSession);
+            return res.status(200).json({ data: merchantSession });
         } catch (error: any) {
             console.error("Error occurred on validate-merchant:", error);
             return res.status(500).json({ error: error.message });

@@ -117,7 +117,7 @@ const onApplePayButtonClicked = async (id: string, price: any) => {
       currencyCode: 'USD',
       total: {
         label: 'metammerce',
-        amount: '0.01', // Total amount to charge
+        amount: '1', // Total amount to charge
       },
       supportedNetworks: ['visa', 'masterCard', 'amex'],
       merchantCapabilities: ['supports3DS'],
@@ -144,8 +144,8 @@ const onApplePayButtonClicked = async (id: string, price: any) => {
       }
 
       const sessionData = await merchantSession.json();
-      console.log("sessionData ==============", sessionData);
-      session.completeMerchantValidation(sessionData);
+      console.log("sessionData ==============", sessionData.data);
+      session.completeMerchantValidation(sessionData.data);
     };
 
     session.onpaymentauthorized = async (event: any) => {
@@ -191,10 +191,10 @@ const onApplePayButtonClicked = async (id: string, price: any) => {
       }
     };
 
-    session.oncancel = (event: any) => {
-      console.log("oncancel event------------>", event);
-      // Payment canceled by WebKit
-    };
+    // session.oncancel = (event: any) => {
+    //   console.log("oncancel event------------>", event);
+    //   // Payment canceled by WebKit
+    // };
 
     session.begin();
     // } else {
