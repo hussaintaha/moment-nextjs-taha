@@ -90,13 +90,13 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
 
             console.log("merchantSession", merchantSession);
 
-            res.status(200).json(merchantSession);
+            return res.status(200).json(merchantSession);
         } catch (error: any) {
             console.error("Error occurred on validate-merchant:", error);
-            res.status(500).json({ error: error.message });
+            return res.status(500).json({ error: error.message });
         }
     } else {
         res.setHeader('Allow', ['POST']);
-        res.status(405).end(`Method ${req.method} Not Allowed`);
+       return res.status(405).end(`Method ${req.method} Not Allowed`);
     }
 }
