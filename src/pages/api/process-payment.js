@@ -18,26 +18,26 @@ export default async function handler(req, res) {
         console.log("paymentData=========>", paymentData);
 
         try {
-            const paymentIntent = await stripe.paymentIntents.create({
-                amount: Math.round(paymentData.amount * 100),
-                currency: paymentData.currency || 'usd',
-                payment_method_data: {
-                    type: 'card',
-                    card: {
-                        token: paymentData.token,
-                    },
-                },
-                confirmation_method: 'manual',
-                confirm: true,
-            });
-
             // const paymentIntent = await stripe.paymentIntents.create({
             //     amount: Math.round(paymentData.amount * 100),
-            //     currency: 'usd',
-            //     automatic_payment_methods: {
-            //         enabled: true,
+            //     currency: paymentData.currency || 'usd',
+            //     payment_method_data: {
+            //         type: 'card',
+            //         card: {
+            //             token: paymentData.token,
+            //         },
             //     },
+            //     confirmation_method: 'manual',
+            //     confirm: true,
             // });
+
+            const paymentIntent = await stripe.paymentIntents.create({
+                amount: Math.round(paymentData.amount * 100),
+                currency: 'usd',
+                automatic_payment_methods: {
+                    enabled: true,
+                },
+            });
 
             console.log("paymentIntent-------------->", paymentIntent);
 
